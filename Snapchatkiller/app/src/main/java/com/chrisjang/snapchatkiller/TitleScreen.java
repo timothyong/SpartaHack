@@ -1,13 +1,60 @@
 package com.chrisjang.snapchatkiller;
 
+import android.content.pm.PackageManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.content.Context;
+import android.hardware.Camera;
+import android.content.Intent;
 import android.view.Window;
 
 
 public class TitleScreen extends ActionBarActivity {
+
+    // the camera
+    private Camera cam;
+
+    /**
+     * Check the hardware for a camera
+     * We will use this function to detect if there is a usable camera among the available
+     * hardware.
+     * Returns true if yes, false otherwise
+     */
+    private boolean cameraDetected(Context context) {
+        // use the package manager class to check
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Access the camera (Assuming there is one to access)
+     * We will assume that cameraDetected has already been called and returned true when
+     * this function is called. So we will then use the camera2 API to access the camera
+     * @return the Camera object
+     */
+    public static Camera getCamera() {
+        // the Camera object we will return
+        Camera c = null;
+
+        // attempt to open the camera using try-catch
+        try {
+            c = Camera.open(0);
+        }
+        catch (Exception e) {
+            // Camera is not available for whatever reason
+        }
+
+        // return 'null' if camera is unavailable
+        return c;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +64,31 @@ public class TitleScreen extends ActionBarActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_title_screen);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // get the 'button_Camera' button by id
+        final Button camera_button = (Button)findViewById(R.id.button_Camera);
+
+        camera_button.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        if (cameraDetected(getApplicationContext())) {
+                            camera_button.setText("CAMERA, YAY");
+                            //cam = Camera.open();
+                            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                            startActivity(intent);
+                        }
+                        else {
+                            camera_button.setText("WTF NO CAMERA??");
+                        }
+                    }
+                }
+        );
+
+        // release the camera
+        if (cam != null) {
+            cam.release();
+            cam = null;
+        }
     }
 
 
