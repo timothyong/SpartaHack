@@ -1,8 +1,11 @@
 package com.chrisjang.snapchatkiller;
 
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +14,12 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.content.Intent;
 import android.view.Window;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class TitleScreen extends ActionBarActivity {
@@ -33,6 +42,8 @@ public class TitleScreen extends ActionBarActivity {
             return false;
         }
     }
+
+
 
     /**
      * Access the camera (Assuming there is one to access)
@@ -68,14 +79,18 @@ public class TitleScreen extends ActionBarActivity {
         // get the 'button_Camera' button by id
         final Button camera_button = (Button)findViewById(R.id.button_Camera);
 
+
+
+
         camera_button.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         if (cameraDetected(getApplicationContext())) {
                             camera_button.setText("CAMERA, YAY");
                             //cam = Camera.open();
-                            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                            startActivity(intent);
+                           cameraOnClick();
+
+
                         }
                         else {
                             camera_button.setText("WTF NO CAMERA??");
@@ -84,11 +99,19 @@ public class TitleScreen extends ActionBarActivity {
                 }
         );
 
+
+
         // release the camera
         if (cam != null) {
             cam.release();
             cam = null;
         }
+    }
+
+    //blah
+    public void cameraOnClick() {
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
     }
 
 
