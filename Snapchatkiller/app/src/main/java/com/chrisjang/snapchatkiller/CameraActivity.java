@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import android.widget.ImageButton;
 import android.os.Environment;
 import android.net.Uri;
 import android.widget.Button;
@@ -25,6 +26,10 @@ public class CameraActivity extends Activity {
 
     private Camera mainCamera;
     private CameraPreview mainPreview;
+
+    //temp
+    private boolean postCapture = false;
+    //FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 
     public static Camera getCamera() {
         // the Camera object we will return
@@ -84,6 +89,9 @@ public class CameraActivity extends Activity {
         return mediaFile;
     }
 
+    // global byte array representation of image that is taken
+    private byte[] imageBytes;
+
     //callback
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
@@ -92,6 +100,10 @@ public class CameraActivity extends Activity {
 
             Log.d("Testing", "PICTURE TAKEN!");
 
+            //save the image data to the global array 'imageBytes'
+            imageBytes = data.clone();
+
+            /*
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null){
                 Log.d("Testing", "Error creating media file, check storage permissions");
@@ -106,9 +118,31 @@ public class CameraActivity extends Activity {
                 Log.d("Testing", "File not found: " + e.getMessage());
             } catch (Exception e) {
                 Log.d("Testing", "Error accessing file: " + e.getMessage());
-            }
+            }*/
         }
     };
+
+    // TEMP save the image
+    public void saveImage(byte[] data) {
+        File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE); //only images for now
+        if (pictureFile == null) {
+            Log.d("saveImage", "Error creating media file, check storage permissions");
+            return;
+        }
+
+        // try to save the image to storage
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(data);
+            fos.close();
+        }
+        catch (FileNotFoundException e) {
+            Log.d("saveImage", "File not found: " + e.getMessage());
+        }
+        catch (Exception e) {
+            Log.d("saveImage", "Error accessing file: " + e.getMessage());
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,19 +157,66 @@ public class CameraActivity extends Activity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mainPreview);
 
-        Button captureButton = (Button) findViewById(R.id.button_capture);
+        // capture button
+        final ImageButton captureButton = (ImageButton) findViewById(R.id.button_capture);
 
+        // save button
+        final ImageButton saveButton = (ImageButton)findViewById(R.id.button_save);
+
+        // cancel button
+        final ImageButton cancelButton = (ImageButton)findViewById(R.id.button_cancel);
+
+        //event listener for capture button
         captureButton.setOnClickListener(
-                new Button.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // get an image from the camera
+            new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // get an image from the camera
+                    if (!postCapture) {
+                        //captureButton.setText("Save");
                         mainCamera.takePicture(null, null, mPicture);
+
+                        postCapture = true;
+
+
+                        // make save and cancel buttons visible
+                        saveButton.setVisibility(View.VISIBLE);
+                        cancelButton.setVisibility(View.VISIBLE);
+                    }
+                    else {
+
+                        finish();
                     }
                 }
+            }
+        );
+
+        // event listener for save button
+        saveButton.setOnClickListener(
+            new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //just hide capture button for now
+                    //captureButton.setVisibility(View.INVISIBLE); OK THIS WORKS!
+
+                    //TEMP save the image
+                    saveImage(imageBytes);
+
+                }
+            }
+        );
+
+        // event listener for cancel button
+        cancelButton.setOnClickListener(
+            new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TEMP Go back to splash for now
+                    finish();
+                }
+            }
         );
     }
-
 
     @Override
     protected void onPause() {
