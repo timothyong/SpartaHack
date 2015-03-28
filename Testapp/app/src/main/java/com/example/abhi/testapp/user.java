@@ -1,5 +1,7 @@
 package com.example.abhi.testapp;
 
+import java.util.Map;
+
 /**
  * Created by Abhi on 3/28/2015.
  */
@@ -13,7 +15,7 @@ public class user {
 
     private boolean State;
 
-
+    private Map<String,String> eventidmap;//maps integer to event id
 
     //constructors
     public user(){
@@ -29,6 +31,8 @@ public class user {
         Password = p;
 
         State = false;
+
+
     }
 
     // Setters
@@ -44,7 +48,14 @@ public class user {
 
     }
 
+    public void addtoeventidmap(String str){
+        String id =  String.valueOf(eventidmap.size());
+        eventidmap.put(str,id);//map with keys as event name and id as values
+    }
 
+    public Map<String,String> geteventidmap(){
+        return eventidmap;
+    }
     // Getters
     public String getDisplayName(){
 
