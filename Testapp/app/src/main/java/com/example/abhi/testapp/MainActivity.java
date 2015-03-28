@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onStart(){
         super.onStart();
-        ListView eventslistview = (ListView) findViewById(R.id.eventslist);
+
 
         Intent it = getIntent();
         username = it.getStringExtra("user");
@@ -58,15 +58,16 @@ public class MainActivity extends ActionBarActivity {
 
         final ArrayList<String> names = new ArrayList<String>();
 
-        final Map<String,String> idname;
+        //final Map<String,String> idname;
         usernamelist.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String,userobj> eve= (Map<String,userobj>)dataSnapshot.getValue();//userobj = userobject
-                userobj use = eve.get("username");
-                idname = use.eventidnamemap; //a map with the value as id and keys as names
+                Map<String,user> eve= (Map<String,user>)dataSnapshot.getValue();//userobj = userobject
+                //userobj use = eve.get("username");
+                Map<String,String> idname = eve.get(username).geteventidmap(); //a map with the value as id and keys as names
                 for(String str : idname.keySet())
                     names.add(str);
+                createadapter(idname,names);
             }
 
             @Override
@@ -90,6 +91,27 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        /*ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,names);
+        eventslistview.setAdapter(adapter);
+
+        eventslistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final String itemname = (String) parent.getItemAtPosition(position);//get the event id
+                Intent it = new Intent(getApplicationContext(),imagedisplay.class);
+                it.putExtra("idval",idname.get(itemname));
+                it.putExtra("username",username);
+                startActivity(it);
+            }
+        });
+        */
+    }
+
+
+    public void createadapter(final Map<String,String> mp,ArrayList<String> names){
+        ListView eventslistview = (ListView) findViewById(R.id.eventslist);
+
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,names);
         eventslistview.setAdapter(adapter);
 
@@ -98,14 +120,13 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final String itemname = (String) parent.getItemAtPosition(position);//get the event id
-                Intent it = new Intent(getApplicationContext(),nextscreen.class);
-                it.putExtra("idval",idname.get(itemname));
+                Intent it = new Intent(getApplicationContext(),imagedisplay.class);
+                it.putExtra("idval",mp.get(itemname));
                 it.putExtra("username",username);
                 startActivity(it);
             }
         });
     }
-
 
 
 

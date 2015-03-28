@@ -121,22 +121,22 @@ public class authorization extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void logintheuser(String add, final String password,final String user){
+    public void logintheuser(String add, final String password,final String username){
         Firebase gotuser = new Firebase(add);
         gotuser.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String,userobj> use = (Map<String,userobj>)dataSnapshot.getValue();
-                if(use.getstate==true)
-                       displayerror(user,2);
-                use.setstate(true);
-                if(password==useobj.getpassword()){
+                Map<String,user> use = (Map<String,user>)dataSnapshot.getValue();
+                if(use.get(username).getState()==true)
+                       displayerror(username,2);
+                use.get(username).setState(true);
+                if(password==use.get(username).getPassword()){
                     Intent it = new Intent(getApplicationContext(),MainActivity.class);
-                    it.putExtra("user",user);
+                    it.putExtra("user",username);
                     startActivity(it);
                 }
                 else
-                    displayerror(user,3);//3 if passwrod entered is wrong
+                    displayerror(username,3);//3 if passwrod entered is wrong
             }
 
             @Override
