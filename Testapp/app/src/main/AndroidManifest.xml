@@ -8,28 +8,32 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:name=".authorization"
+            android:label="@string/title_activity_authorization" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <uses-permission android:name="android.permission.INTERNET" />
-
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+        </activity>
         <activity
             android:name=".imagedisplay"
             android:label="@string/title_activity_imagedisplay" >
         </activity>
         <activity
-            android:name=".authorization"
-            android:label="@string/title_activity_authorization" >
-        </activity>
-        <activity
             android:name=".newuser"
             android:label="@string/title_activity_newuser" >
+        </activity>
+
+        <uses-permission android:name="android.permission.INTERNET" />
+
+        <activity
+            android:name=".createevent"
+            android:label="@string/title_activity_createevent" >
         </activity>
     </application>
 

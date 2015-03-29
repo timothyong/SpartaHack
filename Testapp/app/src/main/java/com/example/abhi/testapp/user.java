@@ -1,10 +1,8 @@
 package com.example.abhi.testapp;
-
+import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Abhi on 3/28/2015.
- */
+
 public class user {
 
     private String DisplayName;
@@ -15,12 +13,10 @@ public class user {
 
     private boolean State;
 
-    private Map<String,String> eventidmap;//maps integer to event id
+    private Map<String,String> eventidmap;//maps eventid = eventname
+                                          //        key      value
 
     //constructors
-    public user(){
-
-    }
 
     public user(String N, String u, String p){
 
@@ -30,9 +26,7 @@ public class user {
 
         Password = p;
 
-        State = false;
-
-
+        State = true;
     }
 
     // Setters
@@ -48,15 +42,24 @@ public class user {
 
     }
 
-    public void addtoeventidmap(String str){
-        String id =  String.valueOf(eventidmap.size());
-        eventidmap.put(str,id);//map with keys as event name and id as values
+
+    // Getters
+
+    public Map<String,String> getMap(){
+        Map<String,String> ret = new HashMap<String,String>();
+        ret.put("username", getDisplayName());
+        ret.put("password", getPassword());
+        //ret.put("", value)
+        return ret;
+
     }
 
-    public Map<String,String> geteventidmap(){
-        return eventidmap;
+    public Map<String,Map<String,String>> getindex(){
+        Map<String,Map<String,String>> ret = new HashMap<String,Map<String,String>>();
+        ret.put("eventidmap",eventidmap);
+        return ret;
     }
-    // Getters
+
     public String getDisplayName(){
 
         return DisplayName;
@@ -80,3 +83,4 @@ public class user {
 
 
 }
+	

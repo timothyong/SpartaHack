@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class User {
 
@@ -9,6 +12,7 @@ public class User {
 	
 	private boolean State;
 	
+	private Map<String,String> eventidmap;
 	
 	
 	//constructors 
@@ -39,6 +43,22 @@ public class User {
 	
 	
 	// Getters
+	
+	public Map<String,String> getMap(){
+		Map<String,String> ret = new HashMap<String,String>();
+		ret.put("username", getDisplayName());
+		ret.put("password", getPassword());
+		//ret.put("", value)
+		return ret;
+		
+	}
+	
+	public Map<String,Map<String,String>> getindex(){
+		Map<String,Map<String,String>> ret = new HashMap<String,Map<String,String>>();
+		ret.put("eventidmap",eventidmap);
+		return ret;
+	}
+	
 	public String getDisplayName(){
 		
 		return DisplayName;

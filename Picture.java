@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.util.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.apache.commons.codec.binary.Base64;
@@ -17,7 +18,7 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Picture {
 	
-	public String UserTag;
+	public String UserTag;  
 	
 	
 	String Base64String =" ";
@@ -42,9 +43,19 @@ public class Picture {
 		}
 		
 		Base64String = getBase64String(ImageByteData);
+		
+		
 			
 		
 		
+	}
+	
+	public Map<String,String> getmap(){
+		Map<String,String> ret = new HashMap<String,String>();
+		ret.put("Username", "kkkk");
+		ret.put("Base64String", Base64String);
+		ret.put("Filelength",Integer.toString(FileLength));
+		return ret;
 	}
 
 	public String getBase64String(byte[] imageByteArray){
