@@ -1,4 +1,4 @@
-#NAME TBD
+<img src="http://i.imgur.com/580amRt.png">
 
 ##*This app will destroy Snapchat and Instagram*
 
