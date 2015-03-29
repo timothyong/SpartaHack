@@ -15,6 +15,7 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.content.Intent;
 import android.view.Window;
+import android.widget.ImageButton;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,7 +23,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+// This will be the splash screen
 public class TitleScreen extends ActionBarActivity {
 
     // the camera
@@ -78,7 +79,7 @@ public class TitleScreen extends ActionBarActivity {
         setContentView(R.layout.activity_title_screen);
 
         // get the 'button_Camera' button by id
-        final Button camera_button = (Button)findViewById(R.id.button_Camera);
+        final ImageButton camera_button = (ImageButton)findViewById(R.id.button_Camera);
 
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -93,14 +94,14 @@ public class TitleScreen extends ActionBarActivity {
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         if (cameraDetected(getApplicationContext())) {
-                            camera_button.setText("CAMERA, YAY");
+                            //camera_button.setText("CAMERA, YAY");
                             //cam = Camera.open();
                            cameraOnClick();
 
 
                         }
                         else {
-                            camera_button.setText("WTF NO CAMERA??");
+                            //camera_button.setText("WTF NO CAMERA??");
                         }
                     }
                 }

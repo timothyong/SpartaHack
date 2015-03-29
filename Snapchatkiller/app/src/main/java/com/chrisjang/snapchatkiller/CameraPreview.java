@@ -6,6 +6,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.content.Context;
 import android.util.Log;
+import android.util.Size;
+import java.util.List;
 
 import java.io.IOException;
 
@@ -55,10 +57,51 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
          */
     }
 
+    /**
+     * This helper function will help determine the best resolution dimensions for our CameraPreview
+     * @param sizes - The list of sizes to query to determine the optimal size
+     * @param w     - the width to compare to
+     * @param h     - the height to compare to
+     * @return      - the Camera.Size object that is optimal for the given parameters
+     */
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.05;
+        double targetRatio = (double) w/h;
+
+        if (sizes==null) return null;
+
+        Camera.Size optimalSize = null;
+
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = h;
+
+        // Find size
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        return optimalSize;
+    }
+
     // Surface changer
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         /**
-         * TODO: Rotate or resize camera (See below)
+         * TODO: Rotate; currently only landscape orientation available
          */
 
         // if there is no preview surface
@@ -74,8 +117,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             // Won't do anything here because it means there was no preview to stop
         }
 
-        //TODO: This is where we make changes (rotate, resize, etc)
-        //Make sure sizes are approved -- DO NOT USE ARBITRARY VALUES
+        // Get the camera's parameters so we can determine the optimal width/height
+        Camera.Parameters parameters = mainCamera.getParameters();
+
+        // Get a list of the approved sizes, NEVER USE ARBITRARY VALUES
+        List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+
+        // Call our helper function to determine the right size for us (fullscreen)
+        Camera.Size optimalSize = getOptimalPreviewSize(sizes, getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+
+        // set the optimal size dimensions to our CameraPreview
+        parameters.setPreviewSize(optimalSize.width, optimalSize.height);
+        mainCamera.setParameters(parameters);
 
         // Start up the preview with the new settings
         try {
@@ -84,7 +137,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
         catch (Exception e) {
             //print the error
-            Log.d("Testing", "Error starting camera preview" + e.getMessage());
+            Log.d("SurfaceChanged", "Error starting camera preview" + e.getMessage());
         }
     }
 

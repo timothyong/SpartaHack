@@ -1,7 +1,7 @@
 package com.chrisjang.snapchatkiller;
 
 /**
- * Created by jangerino on 3/28/15.
+ * Created by Christopher Jang [c] on 3/28/15.
  */
 
 import android.app.Activity;
@@ -92,39 +92,32 @@ public class CameraActivity extends Activity {
     // global byte array representation of image that is taken
     private byte[] imageBytes;
 
-    //callback
+    /**
+     * Our callback function that will not immediately handle the Byte[] data but will clone
+     * the data into our global array so we can determine if we need to actually save the data
+     * to our phone's storage
+     */
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
-            Log.d("Testing", "PICTURE TAKEN!");
+            Log.d("PicCallback", "PICTURE TAKEN!");
 
             //save the image data to the global array 'imageBytes'
             imageBytes = data.clone();
-
-            /*
-            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-            if (pictureFile == null){
-                Log.d("Testing", "Error creating media file, check storage permissions");
-                return;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d("Testing", "File not found: " + e.getMessage());
-            } catch (Exception e) {
-                Log.d("Testing", "Error accessing file: " + e.getMessage());
-            }*/
         }
     };
 
-    // TEMP save the image
+    /**
+     * This helper function will take in binary data in the form of 'byte's and save it to the
+     * phone's storage (should be DCIM)
+     * @param data - The data we will be translating into an image and saving to storage
+     */
     public void saveImage(byte[] data) {
         File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE); //only images for now
+
+        // Check if pictureFile was successfully created
         if (pictureFile == null) {
             Log.d("saveImage", "Error creating media file, check storage permissions");
             return;
@@ -204,9 +197,11 @@ public class CameraActivity extends Activity {
                     //just hide capture button for now
                     //captureButton.setVisibility(View.INVISIBLE); OK THIS WORKS!
 
-                    //TEMP save the image
+                    // save the image
                     saveImage(imageBytes);
 
+                    // TEMP return to splash
+                    finish();
                 }
             }
         );
