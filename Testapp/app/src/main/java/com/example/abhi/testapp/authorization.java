@@ -15,7 +15,9 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -60,39 +62,53 @@ public class authorization extends ActionBarActivity {
 
        //everything in here after login button click
 
-        Firebase userlist = new Firebase(users).child(user);// add code to check if user exists or not
-        userlist.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(users+"/"+user)){
-                    logintheuser(users+"/"+user,pass,user);
+            Firebase userlist = new Firebase(users).child(user);// add code to check if user exists or not
+            userlist.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(users + "/" + user)) {
+                        logintheuser(users + "/" + user, pass, user);
+                    } else
+                        displayerror(user, 1);//1 means error not due to wrong password
                 }
-                else
-                    displayerror(user,1);//1 means error not due to wrong password
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
 
-            }
+                }
+            });
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    /*addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            if (dataSnapshot.hasChild(users + "/" + user)) {
+                                logintheuser(users + "/" + user, pass, user);
+                            } else
+                                displayerror(user, 1);//1 means error not due to wrong password
+                        }
 
-            }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
 
-            }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
+                        }
 
-            }
-        });
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });*/
+
+                }
         });
 
         newuser.setOnClickListener(new View.OnClickListener() {
@@ -121,37 +137,37 @@ public class authorization extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void logintheuser(String add, final String password,final String username){
-        Firebase gotuser = new Firebase(add);
-        gotuser.addChildEventListener(new ChildEventListener() {
+    public void logintheuser(final String address, final String password,final String username){
+        final Firebase gotuser = new Firebase(address).child("password");
+        gotuser.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String,user> use = (Map<String,user>)dataSnapshot.getValue();
-                if(use.get(username).getState()==true)
-                       displayerror(username,2);
-                use.get(username).setState(true);
-                if(password==use.get(username).getPassword()){
-                    Intent it = new Intent(getApplicationContext(),MainActivity.class);
-                    it.putExtra("user",username);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String,String> mp = (Map<String, String>) dataSnapshot.getValue();
+                if(password==mp.get("password")){
+                    final Intent it = new Intent(getApplicationContext(), MainActivity.class);
+                    it.putExtra("user", username);
+
+                    final Firebase inner =  new Firebase(address).child("events");
+                    inner.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Map<String,String> ret = new HashMap<String, String>();
+                            ret = (Map<String, String>) dataSnapshot.getValue();
+
+                            it.putExtra("map", (java.io.Serializable) ret);
+
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+
                     startActivity(it);
                 }
                 else
-                    displayerror(username,3);//3 if passwrod entered is wrong
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                    displayerror(username,3);//3 as password entered is wrong
             }
 
             @Override
@@ -159,6 +175,44 @@ public class authorization extends ActionBarActivity {
 
             }
         });
+
+
+
+                /*addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Map<String, user> use = (Map<String, user>) dataSnapshot.getValue();
+                        if (use.get(username).getState() == true)
+                            displayerror(username, 2);
+                        use.get(username).setState(true);
+                        if (password == use.get(username).getPassword()) {
+                            Intent it = new Intent(getApplicationContext(), MainActivity.class);
+                            it.putExtra("user", username);
+                            startActivity(it);
+                        } else
+                            displayerror(username, 3);//3 if password entered is wrong
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });*/
     }
 
     public void displayerror(String user,int err){

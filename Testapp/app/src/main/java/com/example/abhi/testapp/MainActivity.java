@@ -16,6 +16,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String events = "https://groupic.firebaseio.com/#-JlT7Z5wK02qu3uB4LPd|415764419e416d4626e2c2fd87e8d361";
     private static final String users = "https://groupicuser.firebaseio.com/#-JlT7Z5wK02qu3uB4LPd|415764419e416d4626e2c2fd87e8d361";
     private String username="";
+    private Map<String,String> idmap;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,6 +54,14 @@ public class MainActivity extends ActionBarActivity {
 
         Intent it = getIntent();
         username = it.getStringExtra("user");
+        idmap = (Map<String, String>) it.getSerializableExtra("map");
+
+        Iterator iter = idmap.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry pair = (Map.Entry)iter.next();
+            
+
+        }
 
         //the username would be pulled from the user object in the intent passed from the authorization page
         Firebase usernamelist = new Firebase(users).child(username);// get into the url for the user and then access the event ids
@@ -121,7 +131,7 @@ public class MainActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final String itemname = (String) parent.getItemAtPosition(position);//get the event id
                 Intent it = new Intent(getApplicationContext(),imagedisplay.class);
-                it.putExtra("idval",mp.get(itemname));
+                it.putExtra("idval", mp.get(itemname));
                 it.putExtra("username",username);
                 startActivity(it);
             }

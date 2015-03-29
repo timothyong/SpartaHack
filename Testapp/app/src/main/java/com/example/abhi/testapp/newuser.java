@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -19,6 +20,7 @@ public class newuser extends ActionBarActivity {
     EditText password;
     EditText name;
     Button create;
+
     private static final String users = "https://groupicuser.firebaseio.com/#-JlT7Z5wK02qu3uB4LPd|415764419e416d4626e2c2fd87e8d361";
 
     @Override
@@ -30,17 +32,28 @@ public class newuser extends ActionBarActivity {
         password = (EditText) findViewById(R.id.newpassword);
         name = (EditText) findViewById(R.id.enternewname);
 
-        user person = new user(name.toString(),username.toString(),password.toString());
+        final user person = new user(name.toString(),username.toString(),password.toString());
 
         //person.setUserName(username.toString());
         //person.setpassword(password.toString());
         //person.setname(name.toString());
         //person.setState(false);
 
-        Firebase ref = new Firebase(users);
-        Map<String,user> enter = new HashMap<String,user>();
+        create = (Button) findViewById(R.id.create);
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Firebase ref = new Firebase(users);
+                ref.child(person.getUserName()).setValue(person.getMap());
+                ref.child(person.getUserName()).child("events").setValue(person.getindex());
+            }
+        });
+
+
+
+        /*Map<String,user> enter = new HashMap<String,user>();
         enter.put(username.toString(),person);
-        ref.setValue(username.toString());
+        ref.setValue(username.toString());*/
     }
 
 
