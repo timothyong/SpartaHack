@@ -13,8 +13,8 @@ public class user {
 
     private boolean State;
 
-    private Map<String,String> eventidmap;
-
+    private Map<String,String> eventidmap;//maps eventid = eventname
+                                          //        key      value
 
     //constructors
 

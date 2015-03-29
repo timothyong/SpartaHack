@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.firebase.client.ChildEventListener;
@@ -33,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String users = "https://groupicuser.firebaseio.com/#-JlT7Z5wK02qu3uB4LPd|415764419e416d4626e2c2fd87e8d361";
     private String username="";
     private Map<String,String> idmap;
+    Button addeveent;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,20 +58,15 @@ public class MainActivity extends ActionBarActivity {
         username = it.getStringExtra("user");
         idmap = (Map<String, String>) it.getSerializableExtra("map");
 
-        Iterator iter = idmap.entrySet().iterator();
-        while(iter.hasNext()){
-            Map.Entry pair = (Map.Entry)iter.next();
-            
 
-        }
 
         //the username would be pulled from the user object in the intent passed from the authorization page
         Firebase usernamelist = new Firebase(users).child(username);// get into the url for the user and then access the event ids
 
-        final ArrayList<String> names = new ArrayList<String>();
+        createadapter(idmap);
 
         //final Map<String,String> idname;
-        usernamelist.addChildEventListener(new ChildEventListener() {
+        /*usernamelist.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map<String,user> eve= (Map<String,user>)dataSnapshot.getValue();//userobj = userobject
@@ -100,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
-
+        */
         /*ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,names);
         eventslistview.setAdapter(adapter);
 
@@ -118,8 +115,9 @@ public class MainActivity extends ActionBarActivity {
         */
     }
 
-
-    public void createadapter(final Map<String,String> mp,ArrayList<String> names){
+    public void createadapter(Map<String,String> ids){
+        /*
+        old content
         ListView eventslistview = (ListView) findViewById(R.id.eventslist);
 
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,names);
@@ -136,6 +134,44 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(it);
             }
         });
+        */
+
+        final ArrayList<String> names = new ArrayList<String>();
+        final ArrayList<String> idlist = new ArrayList<String>();
+
+        Iterator iter = idmap.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry pair = (Map.Entry)iter.next();
+            names.add(pair.getValue().toString());
+            idlist.add(pair.getKey().toString());
+        }
+
+        addeveent = (Button) findViewById(R.id.addeventbutton);
+
+        ListView eventslist = (ListView)findViewById(R.id.eventslist);
+        ArrayAdapter adap = new ArrayAdapter(this,android.R.layout.simple_list_item_1,names);
+        eventslist.setAdapter(adap);
+
+        addeveent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent inte = new Intent(getApplicationContext(),createevent.class);
+                startActivity(inte);
+            }
+        });
+
+        eventslist.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int a = idlist.indexOf(parent.getItemAtPosition(position));
+                String eventid = idlist.get(a);
+                Intent intent = new Intent(getApplicationContext(),imagedisplay.class);
+                intent.putExtra("eventid",eventid);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

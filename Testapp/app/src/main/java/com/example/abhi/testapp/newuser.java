@@ -1,5 +1,6 @@
 package com.example.abhi.testapp;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,8 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +37,32 @@ public class newuser extends ActionBarActivity {
         password = (EditText) findViewById(R.id.newpassword);
         name = (EditText) findViewById(R.id.enternewname);
 
+        Firebase ref = new Firebase(users);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(username.toString()))
+                    displayerror();
+                else
+                    createusername(username.toString(),password.toString(),name.toString());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+
+
+
+        /*Map<String,user> enter = new HashMap<String,user>();
+        enter.put(username.toString(),person);
+        ref.setValue(username.toString());*/
+    }
+
+
+    public void createusername(String username,String pass,String name){
         final user person = new user(name.toString(),username.toString(),password.toString());
 
         //person.setUserName(username.toString());
@@ -44,18 +75,19 @@ public class newuser extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Firebase ref = new Firebase(users);
+
                 ref.child(person.getUserName()).setValue(person.getMap());
                 ref.child(person.getUserName()).child("events").setValue(person.getindex());
+                Intent it = new Intent(getApplicationContext(),authorization.class);
+                startActivity(it);
             }
         });
 
-
-
-        /*Map<String,user> enter = new HashMap<String,user>();
-        enter.put(username.toString(),person);
-        ref.setValue(username.toString());*/
     }
 
+    public void displayerror(){
+        Toast tos = Toast.makeText(getApplicationContext(),"Username Already taken",Toast.LENGTH_LONG);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -14,17 +14,17 @@ import com.firebase.client.Query;
 
 //this is the picaadapter class which extends the firebaseadapter class and populates the view again and again once a new image is added
 
-public class picadapter extends FirebaseListAdapter<pict> {
+public class picadapter extends FirebaseListAdapter<user> {
 
     private String username;
 
     public picadapter(Query ref,Activity activity,int layout,String mUsername){
-        super(ref,pict.class,layout,activity);
+        super(ref,user.class,layout,activity);
     }
 
 
     @Override
-    protected void populateview(View v, pict model) {
+    protected void populateview(View v, user model) {
 
     }
 }
