@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.content.Context;
 import android.hardware.Camera;
@@ -79,7 +80,13 @@ public class TitleScreen extends ActionBarActivity {
         // get the 'button_Camera' button by id
         final Button camera_button = (Button)findViewById(R.id.button_Camera);
 
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
 
         camera_button.setOnClickListener(
